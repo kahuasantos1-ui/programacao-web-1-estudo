@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudo — Programação Web 1</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
+    --line:#30363d; --txt:#e6edf3; --muted:#8b949e;
+    --acc:#7c5cff; --acc2:#4d9fff;
+    --ok:#238636; --ok-bg:#0f3a1d; --ok-line:#2ea043;
+    --err:#da3633; --err-bg:#3a1413; --err-line:#f85149;
+    --css:#4d9fff; --js:#f5c518; --jq:#0a66c2; --fw:#41b883;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 80% -10%,#1a2233 0,var(--bg) 55%);
+    color:var(--txt);min-height:100vh;line-height:1.55;
+    padding:24px 16px 80px;
+  }
+  .wrap{max-width:860px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:26px}
+  header h1{font-size:clamp(22px,4vw,32px);font-weight:800;letter-spacing:-.5px}
+  header h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:var(--muted);margin-top:6px;font-size:14px}
+
+  /* barra de tópicos */
+  .topics{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 22px}
+  .chip{
+    border:1px solid var(--line);background:var(--bg2);color:var(--txt);
+    padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:600;
+    transition:.18s;display:flex;align-items:center;gap:7px;
+  }
+  .chip:hover{border-color:var(--acc);transform:translateY(-1px)}
+  .chip.active{background:var(--acc);border-color:var(--acc);color:#fff}
+  .chip .dot{width:9px;height:9px;border-radius:50%}
+  .dot.css{background:var(--css)} .dot.js{background:var(--js)} .dot.jq{background:var(--jq)} .dot.fw{background:var(--fw)} .dot.all{background:linear-gradient(90deg,var(--acc),var(--acc2))}
+
+  /* controles */
+  .controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin-bottom:18px}
+  .controls label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+  .controls button{
+    border:1px solid var(--line);background:var(--bg3);color:var(--txt);
+    padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:.18s
+  }
+  .controls button:hover{border-color:var(--acc2)}
+
+  /* progresso */
+  .progress{height:7px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:6px}
+  .progress > div{height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .35s}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:18px}
+  .meta b{color:var(--txt)}
+
+  /* card */
+  .card{
+    background:var(--bg2);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin-bottom:18px;box-shadow:0 8px 30px rgba(0,0,0,.25);
+    animation:pop .3s ease
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .qhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+  .qnum{flex:0 0 auto;font-size:12px;font-weight:700;color:#fff;background:var(--acc);border-radius:8px;padding:4px 9px;min-width:34px;text-align:center}
+  .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid;text-transform:uppercase;letter-spacing:.5px}
+  .badge.css{color:var(--css);border-color:var(--css)} .badge.js{color:var(--js);border-color:var(--js)} .badge.jq{color:#4d9fff;border-color:var(--jq)} .badge.fw{color:var(--fw);border-color:var(--fw)}
+
+  .question{font-size:16px;font-weight:600;margin:6px 0 4px}
+  .context{font-size:13.5px;color:var(--muted);background:var(--bg);border-left:3px solid var(--acc2);padding:10px 12px;border-radius:0 8px 8px 0;margin:10px 0 14px;white-space:pre-line}
+  .context code{background:#000;color:#7ee787;padding:1px 5px;border-radius:4px;font-size:12.5px}
+
+  .alts{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .alt{
+    border:1px solid var(--line);background:var(--bg3);border-radius:10px;
+    padding:12px 14px;cursor:pointer;display:flex;gap:11px;align-items:flex-start;
+    transition:.15s;font-size:14.5px
+  }
+  .alt:hover{border-color:var(--acc2)}
+  .alt .key{flex:0 0 auto;font-weight:800;width:24px;height:24px;border-radius:6px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
+  .alt .body{flex:1}
+  .alt .exp{display:none;font-size:13px;color:var(--muted);margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
+  .alt code{background:#000;color:#7ee787;padding:1px 5px;border-radius:4px;font-size:12.5px}
+
+  /* estados */
+  .alt.correct{background:var(--ok-bg);border-color:var(--ok-line)}
+  .alt.correct .key{background:var(--ok);border-color:var(--ok-line);color:#fff}
+  .alt.wrong{background:var(--err-bg);border-color:var(--err-line)}
+  .alt.wrong .key{background:var(--err);border-color:var(--err-line);color:#fff}
+  .alt.answered{cursor:default}
+  .alt.answered .exp{display:block}
+  .alt.dim{opacity:.55}
+
+  .tick{margin-left:auto;font-weight:800;font-size:15px}
+  .alt.correct .tick::after{content:"✓";color:var(--ok-line)}
+  .alt.wrong .tick::after{content:"✕";color:var(--err-line)}
+
+  /* navegação */
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+  .nav button{
+    flex:1;border:none;border-radius:10px;padding:13px;font-weight:700;font-size:15px;cursor:pointer;transition:.18s
+  }
+  .nav .prev{background:var(--bg3);color:var(--txt);border:1px solid var(--line)}
+  .nav .prev:hover{border-color:var(--acc2)}
+  .nav .next{background:linear-gradient(90deg,var(--acc),var(--acc2));color:#fff}
+  .nav .next:hover{filter:brightness(1.1)}
+  .nav button:disabled{opacity:.4;cursor:not-allowed}
+
+  /* resultado final */
+  .result{text-align:center;padding:34px 22px}
+  .result .score{font-size:54px;font-weight:800;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .result p{color:var(--muted);margin:8px 0 20px}
+  .result button{background:var(--acc);color:#fff;border:none;padding:12px 26px;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px}
+
+  .revmode .alt{cursor:default}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Programação Web 1 — <span>Modo Estudo</span></h1>
+    <p>CSS · JavaScript · jQuery · Frameworks front-end &nbsp;|&nbsp; 20 questões com explicação</p>
+  </header>
+
+  <div class="topics" id="topics">
+    <button class="chip active" data-topic="all"><span class="dot all"></span>Tudo</button>
+    <button class="chip" data-topic="CSS"><span class="dot css"></span>CSS</button>
+    <button class="chip" data-topic="JavaScript"><span class="dot js"></span>JavaScript</button>
+    <button class="chip" data-topic="jQuery"><span class="dot jq"></span>jQuery</button>
+    <button class="chip" data-topic="Frameworks"><span class="dot fw"></span>Frameworks</button>
+  </div>
+
+  <div class="controls">
+    <button id="btnShuffle">🔀 Embaralhar</button>
+    <button id="btnReview">📖 Modo revisão (ver respostas)</button>
+    <button id="btnRestart">↺ Reiniciar</button>
+  </div>
+
+  <div class="progress"><div id="bar"></div></div>
+  <div class="meta">
+    <span>Questão <b id="cur">1</b> de <b id="tot">20</b></span>
+    <span>Acertos: <b id="hits">0</b> · Erros: <b id="miss">0</b></span>
+  </div>
+
+  <div id="stage"></div>
+
+  <footer>Material de estudo gerado a partir das questões da prova · uso pessoal</footer>
+</div>
+
+<script>
+/* ===== BANCO DE QUESTÕES ===== */
+const DB = [
+  /* ---------- CSS ---------- */
+  {t:"CSS", q:"De que formas a CSS pode ser definida no HTML?", a:[
+    {x:"Externa, anexa e linkada.", c:false, e:"As formas externa, anexa e linkada são todas a mesma — existem outras formas além dessa."},
+    {x:"Inline, interna e externa.", c:true, e:"A CSS pode ser definida direto na TAG (inline), no <head> da página (interna) ou em um arquivo CSS separado (externa)."},
+    {x:"Inline, offline e externa.", c:false, e:"Não existe a opção \"offline\" na definição de CSS."},
+    {x:"Apenas no Head.", c:false, e:"CSS no head (interna) é só uma das formas, mas existem outras."},
+    {x:"Apenas dentro da TAG.", c:false, e:"CSS dentro da TAG (inline) é só uma das formas, existem outras."}
+  ]},
+  {t:"CSS", q:"Como é o \"Bloco de declaração\" de uma regra de CSS?", a:[
+    {x:"<code>Seletor=\"propriedade:valor\"</code>", c:false, e:"Um bloco de declaração de CSS não usa sinal de igual nem aspas."},
+    {x:"<code>Seletor(propriedade=valor;)</code>", c:false, e:"Não usa sinal de igual nem parênteses."},
+    {x:"<code>Seletor[valor:propriedade]</code>", c:false, e:"Não usa colchetes, e o valor não é o primeiro item."},
+    {x:"<code>Seletor{propriedade:valor;}</code>", c:true, e:"Após o nome do seletor, abre-se chaves {} e separa-se com \"dois pontos\" a propriedade e o valor."},
+    {x:"<code>Nome do seletor{propriedade:valor;}</code>", c:false, e:"O seletor não pode ter espaços no seu nome."}
+  ]},
+  {t:"CSS", q:"São tipos de seletores de CSS:", a:[
+    {x:"Classe, subclasse e atributo.", c:false, e:"Não existe seletor de \"subclasse\" na CSS."},
+    {x:"TAG, atributo e variável.", c:false, e:"Não existe seletor de \"variável\" na CSS."},
+    {x:"ID, classe, atributo e pseudoatributo.", c:false, e:"Não existe seletor de \"pseudoatributo\" na CSS."},
+    {x:"TAG, sub-TAG, atributo e constante.", c:false, e:"Não existem seletores de \"sub-TAG\" e \"constante\" na CSS."},
+    {x:"TAG, ID, classe, pseudoclasse e atributo.", c:true, e:"Os seletores podem mirar o nome de uma TAG, um apelido (ID), o apelido de um grupo (classe), grupos de links (pseudoclasse) e o atributo de uma TAG."}
+  ]},
+  {t:"CSS", q:"Que propriedade e valor de um seletor utiliza-se para deixar dois elementos \"lado a lado\" em uma página?", a:[
+    {x:"<code>margin:left</code> e <code>margin:right</code>", c:false, e:"A propriedade margin é pra afastar, não para a disposição dos elementos."},
+    {x:"<code>align:left</code> e <code>align:right</code>", c:false, e:"Align ajusta parágrafos, não a disposição dos elementos lado a lado."},
+    {x:"<code>float:left</code> e <code>float:right</code>", c:true, e:"As propriedades float:left e float:right alinham os dois elementos lado a lado — um na esquerda e outro na direita."},
+    {x:"<code>border:left</code> e <code>border:right</code>", c:false, e:"Border define bordas, não disposição."},
+    {x:"<code>padding:left</code> e <code>padding:right</code>", c:false, e:"Padding cria recuos internos, não disposição lado a lado."}
+  ]},
+  {t:"CSS", q:"O que é um seletor universal e como é representado?", a:[
+    {x:"Formata apenas um elemento da página, representado por <code>#</code> antes do nome.", c:false, e:"O seletor universal não é usado para formatar apenas um elemento (isso é o ID)."},
+    {x:"Formata TODOS os elementos da página, representado por um asterisco <code>(*)</code>.", c:true, e:"O seletor universal com asterisco (*) formata TODOS os elementos da página com o valor definido."},
+    {x:"Formata um grupo específico de elementos, representado por um ponto antes do nome.", c:false, e:"Isso descreve o seletor de classe, não o universal."},
+    {x:"Formata uma TAG específica, representado pelo nome da TAG.", c:false, e:"Isso é o seletor de TAG, não o universal."},
+    {x:"Formata um atributo específico, representado por colchetes em volta do atributo.", c:false, e:"Isso é o seletor de atributo, não o universal."}
+  ]},
+
+  /* ---------- JAVASCRIPT ---------- */
+  {t:"JavaScript", q:"Podemos dividir uma ação feita com o JavaScript em dois elementos básicos. Quais são?", a:[
+    {x:"Variável e constante.", c:false, e:"Variável e constante são recursos específicos, não os elementos básicos de uma ação."},
+    {x:"Função e evento.", c:true, e:"A função define O QUE ocorrerá, e o evento define QUANDO ocorrerá a ação."},
+    {x:"Função e variável.", c:false, e:"Variável é um elemento específico, não básico nesse contexto."},
+    {x:"IF e else.", c:false, e:"IF e else são recursos específicos, não os elementos básicos de uma ação."},
+    {x:"Evento e execução.", c:false, e:"Evento e execução acabam sendo a mesma coisa aqui; falta o outro elemento básico (a função)."}
+  ]},
+  {t:"JavaScript", q:"São exemplos de eventos do JavaScript:", a:[
+    {x:"OnClick, OnCharge e OnLoad.", c:false, e:"Não existe o evento OnCharge."},
+    {x:"OnClick, OnSubmit e OnLoad.", c:true, e:"Esses são três exemplos válidos de eventos de JavaScript."},
+    {x:"OnForward, OnSubmit e OnLoad.", c:false, e:"Não existe o evento OnForward."},
+    {x:"OnClick, OnSubmit e OnRewind.", c:false, e:"Não existe o evento OnRewind."},
+    {x:"OnClick, OnReplay e OnLoad.", c:false, e:"Não existe o evento OnReplay."}
+  ]},
+  {t:"JavaScript", q:"São métodos de JavaScript bastante utilizados:", a:[
+    {x:"OnClick, OnSubmit e OnLoad.", c:false, e:"Esses são eventos, não métodos."},
+    {x:"<code>Alarm()</code>, <code>Confirm()</code> e <code>Play()</code>.", c:false, e:"Não existem os métodos Alarm() e Play()."},
+    {x:"<code>Alert()</code>, <code>Confirm()</code> e <code>Prompt()</code>.", c:true, e:"São métodos de aviso em janela no navegador."},
+    {x:"if, elseif e else.", c:false, e:"Esses são recursos de controle, não métodos."},
+    {x:"DOM, Canvas e Object.", c:false, e:"Esses não são métodos de JavaScript."}
+  ]},
+  {t:"JavaScript", q:"Qual a sintaxe correta de um código JavaScript?", a:[
+    {x:"<code>&lt;script type=\"text/css\"&gt; conteúdo do Script; &lt;/script&gt;</code>", c:false, e:"O tipo \"text/css\" não é indicado para o JavaScript."},
+    {x:"<code>&lt;script type=\"text/javascript\"&gt; conteúdo do Script; &lt;/script&gt;</code>", c:true, e:"Utilizamos a TAG &lt;script&gt; com o tipo \"text/javascript\"."},
+    {x:"<code>&lt;Javascript&gt; conteúdo do Script; &lt;/Javascript&gt;</code>", c:false, e:"Não existe uma TAG Javascript."}
+  ]},
+  {t:"JavaScript", q:"Qual a função de uma VARIÁVEL no JavaScript?", a:[
+    {x:"Fazer um teste condicional.", c:false, e:"Não é função de uma variável fazer teste condicional."},
+    {x:"Ter um valor fixo que não pode ser alterado.", c:false, e:"Uma variável, por definição, não tem valor fixo (isso seria uma constante)."},
+    {x:"Ter um valor que varia ou que pode ser inserido pelo usuário.", c:true, e:"Essa é exatamente a função que se espera de uma variável."},
+    {x:"Ter um valor nulo.", c:false, e:"Uma variável não deve ter valor nulo como propósito."},
+    {x:"Não existem variáveis no JavaScript.", c:false, e:"No JavaScript existem variáveis sim, e são muito utilizadas."}
+  ]},
+
+  /* ---------- JQUERY ---------- */
+  {t:"jQuery", q:"jQuery é uma biblioteca pequena, mas com grande adoção em páginas web por permitir comportamentos dinâmicos. Assinale a alternativa correta quanto às características do jQuery:", a:[
+    {x:"Tem ganhos de performance pela sua estruturação das bibliotecas.", c:false, e:"Ao contrário: uma das principais desvantagens do jQuery é justamente quanto à performance."},
+    {x:"Tem compatibilidade e possibilita a instalação de plug-ins e extensões.", c:true, e:"Uma das grandes vantagens do jQuery é a compatibilidade e a possibilidade de instalar novos plug-ins e extensões. Tem suporte ao padrão CSS3."},
+    {x:"Substituição total do JavaScript, não sendo necessário conhecer a linguagem.", c:false, e:"Conhecer jQuery NÃO substitui a necessidade de entender JavaScript — jQuery é uma biblioteca da própria linguagem."},
+    {x:"Tem uma sintaxe um pouco mais verbosa que o JavaScript.", c:false, e:"Pelo contrário: o jQuery tem sintaxe mais simplificada, ou seja, MENOS verbosa que o JavaScript."}
+  ]},
+  {t:"jQuery", q:"Os selectors são recursos fundamentais do jQuery. Analise o código e assinale a alternativa correta quanto ao tipo de selector: <code>$(\"#test\").hide();</code>", a:[
+    {x:"Seleciona um único elemento que corresponde ao ID fornecido.", c:true, e:"O selector com # seleciona um único elemento pelo ID. (Ponto = classe; * = universal; [name*=\"value\"] = substring)."},
+    {x:"Seleciona todos os elementos que correspondem à classe especificada.", c:false, e:"Classe é selecionada com ponto-final (.), não com #."},
+    {x:"Seleciona todos os elementos disponíveis em um DOM.", c:false, e:"Isso seria o selector universal (*)."},
+    {x:"Seleciona os resultados combinados de todos os seletores especificados.", c:false, e:"Isso seria o selector Multiple Elements."}
+  ]},
+  {t:"jQuery", q:"Problemas no uso do jQuery costumam estar ligados à instalação/referência da biblioteca no HTML. Sobre a instalação da biblioteca, assinale a alternativa correta:", a:[
+    {x:"O arquivo js deve estar localizado no mesmo diretório do arquivo HTML.", c:false, e:"O arquivo HTML não está no mesmo diretório do js, e o js precisa ser renomeado para biblioteca."},
+    {x:"O arquivo js está num diretório chamado \"biblioteca\" onde também está o HTML.", c:false, e:"O diretório correto é \"js\", e o HTML não está nele."},
+    {x:"O arquivo js está num diretório \"js\" onde também está o HTML.", c:false, e:"O HTML não está no mesmo diretório js — esse é o erro comum."},
+    {x:"O arquivo js está num diretório chamado \"js\" e deve ser renomeado para \"biblioteca\".", c:true, e:"Para funcionar, o arquivo js deve ser renomeado para \"biblioteca\" e ficar num diretório chamado \"js\". \"biblioteca\" deve ser apenas o nome do arquivo js."}
+  ]},
+  {t:"jQuery", q:"Um cuidado importante é garantir que o jQuery só execute APÓS a página carregar. Qual solução auxilia nisso?", a:[
+    {x:"Salvar a biblioteca junto ao arquivo index.HTML.", c:false, e:"Salvar junto ao HTML não resolve o problema, é apenas uma padronização."},
+    {x:"Manter a versão atualizada constantemente.", c:false, e:"Isso está ligado a garantir compatibilidade, não ao momento de execução."},
+    {x:"Garantir que a tag &lt;script&gt; seja a primeira de todas na ordem.", c:false, e:"Executar o script antes de tudo evita problemas de importação, mas não garante que rode após o carregamento."},
+    {x:"Implementar mecanismos de refresh na tela.", c:false, e:"Refresh na tela, ao contrário, pode causar problemas na execução."},
+    {x:"Criar uma função $ que recebe uma função anônima como argumento.", c:true, e:"Criar uma função $ que recebe como parâmetro uma função (anônima) que executa os elementos da página garante que o jQuery rode só após o carregamento."}
+  ]},
+  {t:"jQuery", q:"Há um bloco &lt;div&gt; com <code>id=\"novo\"</code> e é preciso esconder todo o seu conteúdo. Em jQuery, o comando correto seria:", a:[
+    {x:"<code>$(class=\".novo\").hide();</code>", c:false, e:"Sintaxe inválida. Para ID usa-se #, não class=."},
+    {x:"<code>$(\"#novo\").hide();</code>", c:true, e:"Para esconder usa-se a função hide; e para mirar o ID usa-se #. Logo: $(\"#novo\").hide();"},
+    {x:"<code>$(\".novo\").hide();</code>", c:false, e:"O ponto (.) seleciona classe, não ID."},
+    {x:"<code>$(\"novo\").hide()</code>", c:false, e:"Falta o # do ID antes do nome."},
+    {x:"<code>$(hide).novo();</code>", c:false, e:"Sintaxe completamente invertida e inválida."}
+  ]},
+
+  /* ---------- FRAMEWORKS ---------- */
+  {t:"Frameworks", q:"Sobre Bootstrap, Angular e Vue.js, analise as afirmações e marque o que é correto:",
+   ctx:"I. O Bootstrap é voltado principalmente à estilização e ao design responsivo, oferecendo componentes visuais e classes utilitárias.\nII. O Angular é um framework completo, baseado em arquitetura modular, componentes e uso obrigatório de TypeScript.\nIII. O Vue.js é um framework progressivo e flexível, voltado à construção de interfaces de usuário reativas.\nIV. O Bootstrap utiliza Virtual DOM para gerenciar a atualização da interface.",
+   a:[
+    {x:"I e II, apenas.", c:false, e:"Faltou a III, que também está correta. E a IV é falsa."},
+    {x:"I, II e III, apenas.", c:true, e:"I, II e III estão certas. A IV é falsa: o Bootstrap NÃO usa Virtual DOM — ele é uma biblioteca de CSS e componentes visuais, não um framework JS de renderização."}
+  ]},
+  {t:"Frameworks", q:"Qual a forma mais adequada de utilizar o Bootstrap em um projeto web real?", a:[
+    {x:"Criar todos os estilos exclusivamente com CSS puro, evitando classes prontas.", c:false, e:"Evitar as classes prontas descaracteriza o objetivo do Bootstrap, que é acelerar o desenvolvimento."},
+    {x:"Utilizar componentes prontos do Bootstrap e personalizá-los por meio de classes utilitárias.", c:true, e:"Usar componentes prontos com customizações simples via classes utilitárias é a prática recomendada em projetos reais. O Bootstrap complementa o HTML, não o substitui."}
+  ]},
+  {t:"Frameworks", q:"Sobre gerenciamento de estado e renderização no Angular ou no Vue.js, qual característica está correta?", a:[
+    {x:"Angular e Vue.js utilizam exclusivamente Virtual DOM para renderização.", c:false, e:"Apenas frameworks como o Vue.js usam Virtual DOM; o Angular usa um mecanismo próprio de detecção de mudanças."},
+    {x:"Vue.js utiliza detecção de mudanças baseada em módulos.", c:false, e:"O Vue.js não usa módulos no mesmo nível arquitetural do Angular; permite estado local sem bibliotecas externas obrigatórias."},
+    {x:"Angular apresenta fluxo de dados mais controlado e previsível.", c:true, e:"O Angular favorece um fluxo de dados previsível, sobretudo combinado a bibliotecas como NgRx, sendo indicado para aplicações de grande porte."}
+  ]},
+  {t:"Frameworks", q:"Analise os trechos de código (Angular x Vue.js) e as afirmações sobre seus paradigmas:",
+   ctx:"1º código – Angular (decorator @Component, escrito em TypeScript)\n2º código – Vue.js (export default com data() retornando estado local)\n\nI. O 1º código exemplifica a arquitetura do Angular baseada em componentes e no uso de TypeScript.\nII. O 2º código ilustra a abordagem progressiva e flexível do Vue.js, com gerenciamento de estado local no componente.\nIII. Ambos utilizam o paradigma de componentização para construção da interface.\nIV. O 2º código apresenta arquitetura mais rígida e padronizada do que o 1º.",
+   a:[
+    {x:"I e II, apenas.", c:false, e:"Faltou a III, que também é verdadeira."},
+    {x:"I, II e III, apenas.", c:true, e:"Angular usa decorators e TypeScript (I); Vue.js define estado local no componente (II); ambos adotam componentização (III). A IV é falsa: o Vue.js não é mais rígido que o Angular — sua proposta é ser mais flexível e progressiva."}
+  ]},
+  {t:"Frameworks", q:"Para um projeto que exige alta escalabilidade, controle arquitetural e manutenção a longo prazo, qual a escolha tecnológica mais adequada?", a:[
+    {x:"Angular para protótipos rápidos e MVPs.", c:false, e:"O Angular NÃO é ideal para MVPs/protótipos rápidos por causa da complexidade inicial."},
+    {x:"Vue.js para sistemas corporativos altamente regulados.", c:false, e:"O Vue.js não é a melhor escolha para ambientes altamente regulados que exigem maior controle arquitetural."},
+    {x:"Bootstrap para gerenciar o estado da aplicação.", c:false, e:"O Bootstrap não gerencia estado — atua apenas na camada visual e não substitui frameworks JS."},
+    {x:"Angular para projetos que exigem escalabilidade e controle arquitetural.", c:true, e:"O Angular oferece estrutura, padronização e escalabilidade, sendo indicado para projetos complexos e de longo prazo."}
+  ]}
+];
+
+/* ===== ESTADO ===== */
+const cls = {CSS:"css", JavaScript:"js", jQuery:"jq", Frameworks:"fw"};
+let pool=[], idx=0, hits=0, miss=0, answered={}, filter="all", review=false, shuffled=false;
+
+const stage=document.getElementById('stage');
+const bar=document.getElementById('bar');
+
+function build(){
+  pool = DB.filter(q=> filter==="all" || q.t===filter).map((q,i)=>({...q,_i:i}));
+  if(shuffled) pool = shuffle(pool.slice());
+  idx=0; hits=0; miss=0; answered={};
+  document.getElementById('tot').textContent=pool.length;
+  render();
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function render(){
+  if(idx>=pool.length){ return finish(); }
+  const q=pool[idx];
+  const done = answered[idx]!==undefined || review;
+  const c=cls[q.t];
+
+  let alts = q.a.map((al,i)=>{
+    const correct = al.c, chosen = answered[idx]===i;
+    let st="";
+    if(done){
+      if(correct) st="correct answered";
+      else if(chosen) st="wrong answered";
+      else st="dim answered";
+    }
+    const tick = done && (correct||chosen) ? `<span class="tick"></span>`:"";
+    return `<li class="alt ${st}" data-i="${i}">
+      <span class="key">${String.fromCharCode(65+i)}</span>
+      <span class="body">${al.x}<span class="exp">${al.e}</span></span>${tick}
+    </li>`;
+  }).join("");
+
+  stage.innerHTML = `
+    <div class="card ${review?'revmode':''}">
+      <div class="qhead">
+        <span class="qnum">${idx+1}</span>
+        <span class="badge ${c}">${q.t}</span>
+      </div>
+      <div class="question">${q.q}</div>
+      ${q.ctx?`<div class="context">${q.ctx}</div>`:""}
+      <ul class="alts">${alts}</ul>
+      <div class="nav">
+        <button class="prev" ${idx===0?'disabled':''}>← Anterior</button>
+        <button class="next">${idx===pool.length-1?'Ver resultado':'Próxima →'}</button>
+      </div>
+    </div>`;
+
+  if(!done){
+    stage.querySelectorAll('.alt').forEach(el=>{
+      el.addEventListener('click',()=>choose(parseInt(el.dataset.i)));
+    });
+  }
+  stage.querySelector('.prev').onclick=()=>{ if(idx>0){idx--;render();} };
+  stage.querySelector('.next').onclick=()=>{ idx++; render(); };
+
+  updateMeta();
+}
+
+function choose(i){
+  if(answered[idx]!==undefined||review) return;
+  answered[idx]=i;
+  if(pool[idx].a[i].c) hits++; else miss++;
+  render();
+}
+
+function updateMeta(){
+  document.getElementById('cur').textContent=Math.min(idx+1,pool.length);
+  document.getElementById('hits').textContent=hits;
+  document.getElementById('miss').textContent=miss;
+  bar.style.width=(pool.length? (Math.min(idx,pool.length)/pool.length*100):0)+"%";
+}
+
+function finish(){
+  bar.style.width="100%";
+  const total=hits+miss;
+  const pct = total? Math.round(hits/total*100):0;
+  let msg = pct>=80?"Mandou bem! 🔥":pct>=50?"Tá no caminho, revisa os erros 👊":"Bora revisar com calma 📚";
+  stage.innerHTML=`
+    <div class="card result">
+      <div class="score">${hits}/${total||pool.length}</div>
+      <p>${pct}% de acerto — ${msg}</p>
+      <button onclick="build()">Refazer quiz</button>
+    </div>`;
+  document.getElementById('cur').textContent=pool.length;
+}
+
+/* ===== CONTROLES ===== */
+document.querySelectorAll('#topics .chip').forEach(ch=>{
+  ch.onclick=()=>{
+    document.querySelectorAll('#topics .chip').forEach(c=>c.classList.remove('active'));
+    ch.classList.add('active');
+    filter=ch.dataset.topic; review=false;
+    document.getElementById('btnReview').textContent="📖 Modo revisão (ver respostas)";
+    build();
+  };
+});
+document.getElementById('btnShuffle').onclick=()=>{ shuffled=!shuffled; build();
+  document.getElementById('btnShuffle').style.borderColor = shuffled? 'var(--acc)':'var(--line)'; };
+document.getElementById('btnReview').onclick=()=>{
+  review=!review;
+  document.getElementById('btnReview').textContent = review? "✏️ Voltar ao modo quiz":"📖 Modo revisão (ver respostas)";
+  render();
+};
+document.getElementById('btnRestart').onclick=()=>{ review=false;
+  document.getElementById('btnReview').textContent="📖 Modo revisão (ver respostas)"; build(); };
+
+build();
+</script>
+</body>
+</html>
